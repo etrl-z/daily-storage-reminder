@@ -22,9 +22,29 @@ def invia_email(config, articoli):
 
         righe_html += f"""
         <tr>
-            <td>{articolo['articolo']}</td>
-            <td>{articolo['giacenza']}</td>
-            <td>{articolo['soglia']}</td>
+            <td style="
+                border: 1px solid #cccccc;
+                padding: 8px;
+                text-align: left;
+            ">
+                {articolo['articolo']}
+            </td>
+
+            <td style="
+                border: 1px solid #cccccc;
+                padding: 8px;
+                text-align: right;
+            ">
+                {articolo['giacenza']}
+            </td>
+
+            <td style="
+                border: 1px solid #cccccc;
+                padding: 8px;
+                text-align: right;
+            ">
+                {articolo['soglia']}
+            </td>
         </tr>
         """
 
