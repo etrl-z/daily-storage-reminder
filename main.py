@@ -3,6 +3,7 @@ import openpyxl
 import emailhelper
 
 from pathlib import Path
+from logger import configura_logger
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -37,13 +38,18 @@ def carica_soglie(sheet_soglie, config):
     return soglie
 
 
-def controlla_giacenza(config):
+def controlla_giacenza(config, logger):
 
+    logger.info("Lettura file Excel")
     excel_file = config["excel_file_path"]
 
     workbook = openpyxl.load_workbook(
         excel_file,
         data_only=True
+    )
+
+    logger.info(
+        f"File Excel caricato: {excel_file}"
     )
 
     sheet_magazzino = workbook[
@@ -58,6 +64,10 @@ def controlla_giacenza(config):
 
     # Carico tutte le soglie
     soglie = carica_soglie(sheet_soglie, config)
+
+    logger.info(
+        f"Soglie caricate: {len(soglie)}"
+    )
 
     articoli_da_riordinare = []
 
@@ -80,20 +90,21 @@ def controlla_giacenza(config):
         soglia = soglie.get(articolo)
 
         if soglia is None:
-            print(
-                f"[ATTENZIONE] "
-                f"Nessuna soglia trovata per {articolo}"
+            logger.warning(
+                f"Nessuna soglia trovata per "
+                f"'{articolo}'"
             )
             continue
 
-        print(
-            f"{articolo}: "
-            f"giacenza={giacenza}, "
-            f"soglia={soglia}"
-        )
-
         # Articolo sotto soglia
         if giacenza <= soglia:
+
+            logger.info(
+                f"Rifornimento necessario: "
+                f"{articolo} "
+                f"(giacenza={giacenza}, "
+                f"soglia={soglia})"
+            )
 
             articoli_da_riordinare.append({
                 "articolo": articolo,
@@ -102,6 +113,11 @@ def controlla_giacenza(config):
             })
 
     workbook.close()
+
+    logger.info(
+        f"Articoli da riordinare: "
+        f"{len(articoli_da_riordinare)}"
+    )
 
     # Se ci sono articoli da riordinare
     if articoli_da_riordinare:
@@ -113,38 +129,45 @@ def controlla_giacenza(config):
                 articoli_da_riordinare
             )
 
+            logger.info(
+                "Email di rifornimento inviata"
+            )
+
         except Exception as e:
 
-            print(
-                f"[ERRORE EMAIL] {e}"
+            logger.exception(
+                "Errore durante l'invio della email"
             )
 
     else:
 
-        print(
-            "Nessun articolo necessita di rifornimento."
+        logger.info(
+            "Nessun articolo necessita di rifornimento"
         )
 
 
 def main():
 
-    print("================================")
-    print(" Controllo Magazzino")
-    print("================================")
-
     config = carica_config()
 
+    logger = configura_logger(config)
+
+    logger.info("================================")
+    logger.info("Controllo Magazzino")
+    logger.info("================================")
+
     try:
-        print("\nControllo magazzino...")
 
-        controlla_giacenza(config)
+        logger.info("Avvio controllo magazzino")
 
-        print("\nControllo completato.")
+        controlla_giacenza(config, logger)
 
-    except Exception as e:
+        logger.info("Controllo completato")
 
-        print(
-            f"[ERRORE] {e}"
+    except Exception:
+
+        logger.exception(
+            "Errore durante il controllo"
         )
 
 

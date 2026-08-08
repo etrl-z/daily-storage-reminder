@@ -166,8 +166,3 @@ def invia_email(config, articoli):
         )
 
         server.send_message(messaggio)
-
-    print(
-        f"[MAIL] Inviata notifica per "
-        f"{numero_articoli} articoli"
-    )
