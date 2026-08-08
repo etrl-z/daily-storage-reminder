@@ -429,3 +429,6 @@ FodyWeavers.xsd
 *.msp
 
 config.json
+build
+dist
+*.spec

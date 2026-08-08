@@ -1,3 +1,4 @@
+import sys
 import json
 import openpyxl
 import emailhelper
@@ -6,7 +7,12 @@ from pathlib import Path
 from logger import configura_logger
 
 
-BASE_DIR = Path(__file__).resolve().parent
+if getattr(sys, "frozen", False):
+    BASE_DIR = Path(sys.executable).resolve().parent
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+
+
 CONFIG_FILE = BASE_DIR / "config.json"
 
 
