@@ -132,7 +132,11 @@ def invia_email(config, articoli):
 
     messaggio["Subject"] = oggetto
     messaggio["From"] = smtp_config["from"]
-    messaggio["To"] = smtp_config["to"]
+    messaggio["To"] = ", ".join(smtp_config["to"])
+
+    if smtp_config.get("cc"):
+        messaggio["Cc"] = ", ".join(smtp_config["cc"])
+    
 
     # Prima versione plain text
     messaggio.attach(

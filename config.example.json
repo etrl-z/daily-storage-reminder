@@ -19,6 +19,13 @@
         "username": "xxxx",
         "password": "xxxx",
         "from": "xxxx",
-        "to": "xxxx"
+        "to": [
+            "xxxx",
+            "xxxx"
+        ],
+        "cc": [
+            "xxxx",
+            "xxxx"
+        ]
     }
 }
